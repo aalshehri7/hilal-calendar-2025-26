@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import csv, os, sys, hashlib
 
 KSA_OFFSET = 3  # hours
-INPUT_CSV = os.environ.get("INPUT_CSV", "data/matches.csv")
+INPUT_CSV = os.environ.get("INPUT_CSV", "matches.csv")
 OUTPUT_ICS = os.environ.get("OUTPUT_ICS", "website/hilal_2025_2026.ics")
 
 def to_utc_ical(dt_local_str):
