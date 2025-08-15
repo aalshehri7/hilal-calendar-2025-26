@@ -1,0 +1,30 @@
+name: Build ICS File
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install pandas ics
+
+      - name: Run build script
+        run: python build_ics.py
+
+      - name: Upload ICS file as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: hilal-calendar
+          path: hilal_calendar.ics
