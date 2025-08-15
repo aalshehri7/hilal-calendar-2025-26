@@ -1,8 +1,16 @@
-name: Build ICS File
+name: Build & Publish Hilal (API)
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'   # يوميًا 03:00 UTC
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build:
@@ -13,12 +21,23 @@ jobs:
         with:
           python-version: '3.x'
       - name: Install deps
-        run: pip install pandas ics || true
-      - name: Run build script
-        run: python build_ics.py
-      - name: Upload ICS file as artifact
-        uses: actions/upload-artifact@v4
+        run: pip install requests
+      - name: Build ICS from API
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python auto_fetch.py
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: hilal-ics
-          path: |
-            **/*.ics
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
